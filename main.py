@@ -2,37 +2,42 @@ from PIL import Image, ImageDraw
 from random import randint, choice
 
 # Maze size (cells)
-width, height = 30, 30
+width, height = 45, 72
 cell_size = 20
 radius = cell_size // 3
 grid_width = 1
+
+background_color = (40, 40, 43, 255)
+grid_color = (80, 200, 120, 255)
+path_color = (124, 252, 0, 255)
+
 moves = []
 
-img_width = width * cell_size
-img_height = height * cell_size
+img_width = width * cell_size + 1
+img_height = height * cell_size + 1
 
 # Create a white image
-img = Image.new("RGB", (img_width, img_height), "white")
+img = Image.new("RGB", (img_width, img_height), background_color)
 draw = ImageDraw.Draw(img)
 
 # Draw vertical lines
 for x in range(width + 1):
     x_pos = x * cell_size
-    draw.line([(x_pos, 0), (x_pos, img_height)], fill="black", width=grid_width)
+    draw.line([(x_pos, 0), (x_pos, img_height)], fill=grid_color, width=grid_width)
 
 # Draw horizontal lines
 for y in range(height + 1):
     y_pos = y * cell_size
-    draw.line([(0, y_pos), (img_width, y_pos)], fill="black", width=grid_width)
+    draw.line([(0, y_pos), (img_width, y_pos)], fill=grid_color, width=grid_width)
 
 
 starting_pos = (randint(1, width) * cell_size - (cell_size // 2), randint(1, height-1) * cell_size - (cell_size // 2))
-draw.ellipse((starting_pos[0]-radius, starting_pos[1]-radius, starting_pos[0]+radius, starting_pos[1]+radius), fill=(0, 0, 0))
+draw.ellipse((starting_pos[0]-radius, starting_pos[1]-radius, starting_pos[0]+radius, starting_pos[1]+radius), fill=path_color)
 
 end_pos = (randint(1, width) * cell_size - (cell_size // 2), randint(1, height) * cell_size - (cell_size // 2))
 while end_pos == starting_pos:
     end_pos = (randint(1, width) * cell_size - (cell_size // 2), randint(1, height) * cell_size - (cell_size // 2))
-draw.ellipse((end_pos[0]-radius, end_pos[1]-radius, end_pos[0]+radius, end_pos[1]+radius), fill=(0, 0, 0))
+draw.ellipse((end_pos[0]-radius, end_pos[1]-radius, end_pos[0]+radius, end_pos[1]+radius), fill=path_color)
 
 path = [starting_pos]
 moves.append(starting_pos)
@@ -56,9 +61,9 @@ while moves:
 
         midpoint = ((last_move[0] + chosen[0]) // 2, (last_move[1] + chosen[1]) // 2)
         if chosen[0] == last_move[0]:
-            draw.line([(midpoint[0]-(cell_size//2)+grid_width, midpoint[1]), (midpoint[0]+(cell_size//2)-grid_width, midpoint[1])], fill="white", width=grid_width)
+            draw.line([(midpoint[0]-(cell_size//2)+grid_width, midpoint[1]), (midpoint[0]+(cell_size//2)-grid_width, midpoint[1])], fill=background_color, width=grid_width)
         else:
-            draw.line([(midpoint[0], midpoint[1]-(cell_size//2)+grid_width), (midpoint[0], midpoint[1]+(cell_size//2)-grid_width)], fill="white", width=grid_width)
+            draw.line([(midpoint[0], midpoint[1]-(cell_size//2)+grid_width), (midpoint[0], midpoint[1]+(cell_size//2)-grid_width)], fill=background_color, width=grid_width)
 
 
         last_move = chosen
@@ -80,7 +85,7 @@ while moves:
 # Shortest Path Finder
 path = path[:path.index(end_pos)+1]
 for i in range(1, len(path)):
-    draw.line([path[i-1], path[i]], fill="red", width=grid_width*2)
+    draw.line([path[i-1], path[i]], fill=(124, 252, 0, 255), width=grid_width*2)
 
 
 # Save the maze
